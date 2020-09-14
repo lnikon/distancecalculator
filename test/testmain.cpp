@@ -1,6 +1,9 @@
+#define CATCH_CONFIG_MAIN
 #include "hello.h"
 
 #include <iostream>
+
+#include <catch2/catch.hpp>
 
 namespace ns_testmain
 {
