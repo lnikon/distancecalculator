@@ -23,6 +23,20 @@ sudo pacman -Sy cmake clang make
 
 Please note that this build is tested with g++ 10.2.0 on linux kernel 5.8.6.1.
 
+Clone the project:
+```
+git clone https://github.com/lnikon/distancecalculator
+```
+
+This projects depends on the following framework:
+* Catch2
+
+Those are included as gitsubmodules, so you need to:
+```
+git submodule init
+git submodule update
+```
+
 To build run the following instructions:
 ```
 $ mkdir build && cd build
