@@ -11,3 +11,6 @@ add_executable(disc main.cpp)
 target_link_libraries(disc PRIVATE hello_lib)
 target_compile_features(disc PUBLIC cxx_std_17)
 
+add_subdirectory(common)
+add_subdirectory(structures)
+add_subdirectory(readers)
