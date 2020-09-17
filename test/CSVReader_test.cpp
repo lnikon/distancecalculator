@@ -1,9 +1,10 @@
 #define CATCH_CONFIG_MAIN
 
 #include "CSVReader.hpp"
-#include <memory>
 
 #include <catch2/catch.hpp>
+
+#include <memory>
 
 TEST_CASE("CSVReader: Parse Floats", "[csvreader]")
 {

@@ -6,7 +6,8 @@
 namespace structures
 {
 
-template <typename ValueType> class CSVContainer
+template <typename ValueType>
+class CSVContainer
 {
 public:
     using Row = std::vector<ValueType>;
@@ -26,12 +27,14 @@ void CSVContainer<ValueType>::append(const std::vector<ValueType>& row)
     m_data.push_back(row);
 }
 
-template <typename ValueType> std::size_t CSVContainer<ValueType>::rowCount() const noexcept
+template <typename ValueType>
+std::size_t CSVContainer<ValueType>::rowCount() const noexcept
 {
     return m_data.size();
 }
 
-template <typename ValueType> std::size_t CSVContainer<ValueType>::columnCount() const noexcept
+template <typename ValueType>
+std::size_t CSVContainer<ValueType>::columnCount() const noexcept
 {
     if (rowCount() >= 1)
     {
@@ -41,6 +44,7 @@ template <typename ValueType> std::size_t CSVContainer<ValueType>::columnCount()
     return 0;
 }
 
-template <typename ValueType> using CSVContainerSPtr = std::shared_ptr<CSVContainer<ValueType>>;
+template <typename ValueType>
+using CSVContainerSPtr = std::shared_ptr<CSVContainer<ValueType>>;
 
 } // namespace structures

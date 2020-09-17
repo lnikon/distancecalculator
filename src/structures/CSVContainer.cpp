@@ -2,4 +2,4 @@
 
 namespace strucutres
 {
-} // strucutres
+} // namespace strucutres

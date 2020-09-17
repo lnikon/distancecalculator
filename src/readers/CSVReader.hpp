@@ -7,11 +7,13 @@
 
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 
 namespace readers
 {
 
-template <typename ValueType> class CSVReader final : public ICSVReader<ValueType>
+template <typename ValueType>
+class CSVReader final : public ICSVReader<ValueType>
 {
 public:
     structures::CSVContainerSPtr<ValueType> read(const Path& path) const override;
@@ -44,10 +46,22 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
         }
 
         auto tokens = tokenize(line);
-        typename structures::CSVContainer<ValueType>::Row row;
+        auto row = typename structures::CSVContainer<ValueType>::Row{};
+        auto columnNumber = std::size_t{};
         for (const auto& token : tokens)
         {
-            row.push_back(atof(token.data()));
+            std::stringstream ss(token);
+            ValueType value;
+            ss >> value;
+            if (ss.fail())
+            {
+                std::runtime_error e("Unable to parse token: \"" + token + "\" at line " +
+                                     std::to_string(csvContainer->rowCount()) + ", column " +
+                                     std::to_string(row.size()));
+                throw e;
+            }
+
+            row.emplace_back(std::move(value));
         }
 
         csvContainer->append(row);

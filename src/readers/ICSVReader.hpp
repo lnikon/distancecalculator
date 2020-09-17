@@ -6,7 +6,8 @@
 namespace readers
 {
 
-template <typename ValueType> class ICSVReader
+template <typename ValueType>
+class ICSVReader
 {
 public:
     virtual structures::CSVContainerSPtr<ValueType> read(const Path& path) const = 0;
