@@ -30,6 +30,7 @@ git clone https://github.com/lnikon/distancecalculator
 
 This projects depends on the following framework:
 * Catch2
+* GoogleBenchmark
 
 Those are included as gitsubmodules, so you need to:
 ```
