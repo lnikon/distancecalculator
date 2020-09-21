@@ -28,7 +28,7 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
         return nullptr;
     }
 
-    auto csvContainer = std::make_shared<structures::CSVContainer<ValueType>>();
+    auto         csvContainer = std::make_shared<structures::CSVContainer<ValueType>>();
     std::fstream inStream(path);
     if (!inStream.is_open())
     {
@@ -45,23 +45,23 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
             continue;
         }
 
-        auto tokens = tokenize(line);
-        auto row = typename structures::CSVContainer<ValueType>::Row{};
+        auto tokens       = tokenize(line);
+        auto row          = std::shared_ptr<typename structures::Row<ValueType>>();
         auto columnNumber = std::size_t{};
         for (const auto& token : tokens)
         {
             std::stringstream ss(token);
-            ValueType value;
+            ValueType         value;
             ss >> value;
             if (ss.fail())
             {
                 std::runtime_error e("Unable to parse token: \"" + token + "\" at line " +
                                      std::to_string(csvContainer->rowCount()) + ", column " +
-                                     std::to_string(row.size()));
+                                     std::to_string(row->size()));
                 throw e;
             }
 
-            row.emplace_back(std::move(value));
+            row->emplace_back(std::move(value));
         }
 
         csvContainer->append(row);
