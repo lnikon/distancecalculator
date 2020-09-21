@@ -3,6 +3,8 @@ project(distancecalculator)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_package(Threads)
+
 add_subdirectory(thirdparty/Catch2)
 add_subdirectory(thirdparty/benchmark)
 add_subdirectory(src)
