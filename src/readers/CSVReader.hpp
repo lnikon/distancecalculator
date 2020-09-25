@@ -46,7 +46,7 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
         }
 
         auto tokens       = tokenize(line);
-        auto row          = std::shared_ptr<typename structures::Row<ValueType>>();
+        auto row          = std::make_shared<typename structures::Row<ValueType>>();
         auto columnNumber = std::size_t{};
         for (const auto& token : tokens)
         {

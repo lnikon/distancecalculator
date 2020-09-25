@@ -1,14 +1,26 @@
 #pragma once
 
 #include "IDistanceCalculatorEngine.hpp"
+#include "ThreadPool.hpp"
 
 template <typename ValueType>
 class CPPThreadsDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType>
 {
 public:
-    std::vector<std::vector<ValueType>> calculate() /* noexcept */ const override
+    structures::CSVContainerSPtr<ValueType> calculate(structures::CSVContainerSPtr<ValueType> query, structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
     {
-        return std::vector<std::vector<ValueType>>{};
+        auto result = std::make_shared<structures::CSVContainer<float>>();
+        auto jobs = std::make_shared<threadpool::JobQueue<float>>();
+        for (auto row : *query)
+        {
+            auto job       = std::make_shared<threadpool::Job<float>>(row, dataset, result);
+            jobs->push(job);
+        }
+
+        auto pool = threadpool::ThreadPool<float>(jobs);
+        while (!jobs->empty()) { }
+
+        return result;
     }
 
     DistanceCalculatorEngineType type() /* noexcept */ const override

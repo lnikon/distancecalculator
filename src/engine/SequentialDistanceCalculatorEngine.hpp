@@ -6,9 +6,9 @@ template <typename ValueType>
 class SequentialDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType>
 {
 public:
-    std::vector<std::vector<ValueType>> calculate() /* noexcept */ const override
+    structures::CSVContainerSPtr<ValueType> calculate(structures::CSVContainerSPtr<ValueType> query, structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
     {
-        return std::vector<std::vector<ValueType>>{};
+        return nullptr;
     }
 
     DistanceCalculatorEngineType type() /* noexcept */ const override

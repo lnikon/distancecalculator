@@ -13,6 +13,6 @@ set(PROJECT_SOURCES CUDADistanceCalculatorEngine.hpp
 add_library(engine STATIC ${PROJECT_SOURCES})
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(engine PUBLIC cxx_std_20)
-target_link_libraries(engine PUBLIC common structures)
+target_link_libraries(engine PUBLIC common structures threadpool)
 
 

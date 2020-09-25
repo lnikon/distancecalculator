@@ -8,7 +8,7 @@ target_include_directories(hello_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(hello_lib PUBLIC cxx_std_20)
 
 add_executable(disc main.cpp)
-target_link_libraries(disc PRIVATE hello_lib engine)
+target_link_libraries(disc PRIVATE hello_lib engine readers)
 target_compile_features(disc PUBLIC cxx_std_20)
 
 add_subdirectory(common)

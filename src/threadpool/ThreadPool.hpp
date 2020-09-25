@@ -19,17 +19,14 @@ class Job
 public:
     using CSVContainerSPtr = structures::CSVContainerSPtr<ValueType>;
     using RowSPtr          = structures::RowSPtr<ValueType>;
-    using JobFn            = std::function<CSVContainerSPtr(const RowSPtr, const CSVContainerSPtr)>;
+    using JobFn            = std::function<CSVContainerSPtr(const RowSPtr, const CSVContainerSPtr, CSVContainerSPtr)>;
 
-    Job(const RowSPtr query, const CSVContainerSPtr dataset)
+    Job(const RowSPtr query, const CSVContainerSPtr dataset, CSVContainerSPtr result)
         : m_query(query)
         , m_dataset(dataset)
-
+        , m_result(result)
     {
-        m_fn = [this](const RowSPtr query, const CSVContainerSPtr dataset) {
-            return dataset;
-
-            auto        result    = std::make_shared<structures::CSVContainer<ValueType>>();
+        m_fn = [this](const RowSPtr query, const CSVContainerSPtr dataset, CSVContainerSPtr result) {
             const auto& crDataset = *dataset;
             for (const auto datasetRow : *dataset)
             {
@@ -48,12 +45,13 @@ public:
 
     CSVContainerSPtr exec() const
     {
-        return m_fn(m_query, m_dataset);
+        return m_fn(m_query, m_dataset, m_result);
     }
 
 private:
     const RowSPtr          m_query;
     const CSVContainerSPtr m_dataset;
+    CSVContainerSPtr       m_result;
     JobFn                  m_fn;
 };
 
@@ -145,11 +143,11 @@ public:
             {
                 while (m_jobQueue->empty())
                 {
+                    return;
                 }
 
                 std::shared_ptr<Job<ValueType>> job;
                 m_jobQueue->front(job);
-                std::cout << "thread " << std::this_thread::get_id() << " got job\n";
                 job->exec();
             }
         };

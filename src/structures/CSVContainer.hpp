@@ -21,11 +21,11 @@ public:
     std::size_t rowCount() const noexcept;
     std::size_t columnCount() const noexcept;
 
-    std::vector<RowSPtr<ValueType>>::iterator begin();
-    std::vector<RowSPtr<ValueType>>::iterator end();
+    typename std::vector<RowSPtr<ValueType>>::iterator begin();
+    typename std::vector<RowSPtr<ValueType>>::iterator end();
 
-    std::vector<RowSPtr<ValueType>>::const_iterator cbegin();
-    std::vector<RowSPtr<ValueType>>::const_iterator cend();
+    typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin();
+    typename std::vector<RowSPtr<ValueType>>::const_iterator cend();
 
 private:
     std::vector<RowSPtr<ValueType>> m_data;
@@ -58,25 +58,25 @@ std::size_t CSVContainer<ValueType>::columnCount() const noexcept
  * Members
  */
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::iterator CSVContainer<ValueType>::begin()
+typename std::vector<RowSPtr<ValueType>>::iterator CSVContainer<ValueType>::begin()
 {
     return m_data.begin();
 }
 
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::iterator CSVContainer<ValueType>::end()
+typename std::vector<RowSPtr<ValueType>>::iterator CSVContainer<ValueType>::end()
 {
     return m_data.end();
 }
 
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::const_iterator CSVContainer<ValueType>::cbegin()
+typename std::vector<RowSPtr<ValueType>>::const_iterator CSVContainer<ValueType>::cbegin()
 {
     return m_data.cbegin();
 }
 
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::const_iterator CSVContainer<ValueType>::cend()
+typename std::vector<RowSPtr<ValueType>>::const_iterator CSVContainer<ValueType>::cend()
 {
     return m_data.cend();
 }
@@ -85,25 +85,25 @@ std::vector<RowSPtr<ValueType>>::const_iterator CSVContainer<ValueType>::cend()
  * Free functions.
  */
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::iterator begin(CSVContainer<ValueType>& c)
+typename std::vector<RowSPtr<ValueType>>::iterator begin(CSVContainer<ValueType>& c)
 {
     return c.begin();
 }
 
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::iterator end(CSVContainer<ValueType>& c)
+typename std::vector<RowSPtr<ValueType>>::iterator end(CSVContainer<ValueType>& c)
 {
     return c.end();
 }
 
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::const_iterator cbegin(CSVContainer<ValueType>& c)
+typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin(CSVContainer<ValueType>& c)
 {
     return c.cbegin();
 }
 
 template <typename ValueType>
-std::vector<RowSPtr<ValueType>>::const_iterator cend(CSVContainer<ValueType>& c)
+typename std::vector<RowSPtr<ValueType>>::const_iterator cend(CSVContainer<ValueType>& c)
 {
     return c.cend();
 }

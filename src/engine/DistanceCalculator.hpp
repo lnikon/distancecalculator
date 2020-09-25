@@ -7,6 +7,7 @@
 #include "IDistanceCalculatorEngine.hpp"
 #include "MPIDistanceCalculatorEngine.hpp"
 #include "SequentialDistanceCalculatorEngine.hpp"
+#include "CSVContainer.hpp"
 
 #include <iostream>
 
@@ -22,9 +23,17 @@ public:
         }
     }
 
-    void calculate()
+    void calculate(structures::CSVContainerSPtr<ValueType> query, structures::CSVContainerSPtr<ValueType> dataset)
     {
-        std::cout << "DistanceCalculator::calculate()\n";
+        auto distances = m_engine->calculate(query, dataset);
+        for (const auto& row : *distances)
+        {
+            for (const auto& item : *row)
+            {
+                std::cout << item << ' ';
+            }
+            std::cout << std::endl;
+        }
     }
 
 private:
