@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <cassert>
 
 namespace structures
 {
@@ -21,11 +22,21 @@ public:
     std::size_t rowCount() const noexcept;
     std::size_t columnCount() const noexcept;
 
+    void resize(const std::size_t rowDim, const std::size_t = 0);
+
     typename std::vector<RowSPtr<ValueType>>::iterator begin();
     typename std::vector<RowSPtr<ValueType>>::iterator end();
 
     typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin();
     typename std::vector<RowSPtr<ValueType>>::const_iterator cend();
+
+    void set(const std::size_t idx, RowSPtr<ValueType> value)
+    {
+        m_data[idx] = value;
+    }
+
+    RowSPtr<ValueType>& operator[](std::size_t idx)       { return m_data[idx]; }
+    const RowSPtr<ValueType>& operator[](std::size_t idx) const { return m_data[idx]; }
 
 private:
     std::vector<RowSPtr<ValueType>> m_data;
@@ -52,6 +63,15 @@ std::size_t CSVContainer<ValueType>::columnCount() const noexcept
     }
 
     return 0;
+}
+
+template <typename ValueType>
+void CSVContainer<ValueType>::resize(const std::size_t rowDim, const std::size_t)
+{
+    assert(rowDim > 0);
+//    assert(colDim > 0);
+
+    m_data.resize(rowDim);
 }
 
 /*

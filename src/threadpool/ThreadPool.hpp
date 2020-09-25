@@ -19,15 +19,17 @@ class Job
 public:
     using CSVContainerSPtr = structures::CSVContainerSPtr<ValueType>;
     using RowSPtr          = structures::RowSPtr<ValueType>;
-    using JobFn            = std::function<CSVContainerSPtr(const RowSPtr, const CSVContainerSPtr, CSVContainerSPtr)>;
+    using JobFn            = std::function<CSVContainerSPtr(const RowSPtr, const std::size_t, const CSVContainerSPtr, CSVContainerSPtr)>;
 
-    Job(const RowSPtr query, const CSVContainerSPtr dataset, CSVContainerSPtr result)
+    Job(const RowSPtr query, const std::size_t queryIdx, const CSVContainerSPtr dataset, CSVContainerSPtr result)
         : m_query(query)
+        , m_queryIdx(queryIdx)
         , m_dataset(dataset)
         , m_result(result)
     {
-        m_fn = [this](const RowSPtr query, const CSVContainerSPtr dataset, CSVContainerSPtr result) {
+        m_fn = [this](const RowSPtr query, const std::size_t queryIdx, const CSVContainerSPtr dataset, CSVContainerSPtr result) {
             const auto& crDataset = *dataset;
+            std::size_t datasetRowIdx = 0;
             for (const auto datasetRow : *dataset)
             {
                 // Using simple L1
@@ -37,7 +39,10 @@ public:
                                std::cbegin(*query),
                                std::back_inserter(*resultRow),
                                [](ValueType rhs, ValueType lhs) { return rhs - lhs; });
-                result->append(resultRow);
+                // TODO: What the heck?
+//                result[queryIdx + datasetRowIdx] = std::move(resultRow);
+                result->set(queryIdx + datasetRowIdx, std::move(resultRow));
+                datasetRowIdx++;
             }
             return result;
         };
@@ -45,11 +50,12 @@ public:
 
     CSVContainerSPtr exec() const
     {
-        return m_fn(m_query, m_dataset, m_result);
+        return m_fn(m_query, m_queryIdx, m_dataset, m_result);
     }
 
 private:
     const RowSPtr          m_query;
+    const std::size_t      m_queryIdx;
     const CSVContainerSPtr m_dataset;
     CSVContainerSPtr       m_result;
     JobFn                  m_fn;
