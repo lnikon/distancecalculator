@@ -7,6 +7,7 @@
 #include <memory>
 #include <mutex>
 #include <queue>
+#include <shared_mutex>
 #include <thread>
 
 namespace threadpool
@@ -26,6 +27,8 @@ public:
 
     {
         m_fn = [this](const RowSPtr query, const CSVContainerSPtr dataset) {
+            return dataset;
+
             auto        result    = std::make_shared<structures::CSVContainer<ValueType>>();
             const auto& crDataset = *dataset;
             for (const auto datasetRow : *dataset)
@@ -39,7 +42,7 @@ public:
                                [](ValueType rhs, ValueType lhs) { return rhs - lhs; });
                 result->append(resultRow);
             }
-            return dataset;
+            return result;
         };
     }
 
@@ -63,27 +66,28 @@ class JobQueue
 public:
     bool empty()
     {
-        LockGuard<std::mutex> lg(m_mutex);
+        std::lock_guard<std::mutex> lg(m_mutex);
         return m_jobQueue.empty();
     }
 
     void push(std::shared_ptr<Job<ValueType>> job)
     {
-        LockGuard<std::mutex> lg(m_mutex);
+        std::lock_guard<std::mutex> lg(m_mutex);
         m_jobQueue.push(job);
+        m_cv.notify_one();
     }
 
-    std::shared_ptr<Job<ValueType>> front()
+    void front(std::shared_ptr<Job<ValueType>>& result)
     {
-        LockGuard<std::mutex> lg(m_mutex);
-        auto                  job = m_jobQueue.front();
-
+        std::unique_lock<std::mutex> lk(m_mutex);
+        m_cv.wait(lk, [this] { return !m_jobQueue.empty(); });
+        result = std::move(m_jobQueue.front());
         m_jobQueue.pop();
-        return job;
     }
 
 private:
     std::mutex                                  m_mutex;
+    std::condition_variable                     m_cv;
     std::queue<std::shared_ptr<Job<ValueType>>> m_jobQueue;
 };
 
@@ -137,13 +141,17 @@ public:
         : m_jobQueue(jobQueue)
     {
         auto workerLoop = [this]() {
-            int count = 0;
-            while (m_jobQueue->empty())
+            while (true)
             {
-            }
+                while (m_jobQueue->empty())
+                {
+                }
 
-            std::shared_ptr<Job<ValueType>> job = m_jobQueue->front();
-            job->exec();
+                std::shared_ptr<Job<ValueType>> job;
+                m_jobQueue->front(job);
+                std::cout << "thread " << std::this_thread::get_id() << " got job\n";
+                job->exec();
+            }
         };
 
         // TODO: Switch to rangev3 library
