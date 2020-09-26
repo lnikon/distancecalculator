@@ -1,13 +1,13 @@
 #pragma once
 
 #include "CPPThreadsDistanceCalculatorEngine.hpp"
+#include "CSVContainer.hpp"
 #include "CUDADistanceCalculatorEngine.hpp"
 #include "DistanceCalculatorEngineFactory.hpp"
 #include "DistanceCalculatorEngineType.hpp"
 #include "IDistanceCalculatorEngine.hpp"
 #include "MPIDistanceCalculatorEngine.hpp"
 #include "SequentialDistanceCalculatorEngine.hpp"
-#include "CSVContainer.hpp"
 
 #include <iostream>
 
@@ -23,7 +23,8 @@ public:
         }
     }
 
-    void calculate(structures::CSVContainerSPtr<ValueType> query, structures::CSVContainerSPtr<ValueType> dataset)
+    void calculate(structures::CSVContainerSPtr<ValueType> query,
+                   structures::CSVContainerSPtr<ValueType> dataset)
     {
         auto distances = m_engine->calculate(query, dataset);
         for (const auto& row : *distances)

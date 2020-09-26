@@ -13,22 +13,31 @@
 namespace threadpool
 {
 
+std::mutex gCoutMutex;
+
 template <typename ValueType>
 class Job
 {
 public:
     using CSVContainerSPtr = structures::CSVContainerSPtr<ValueType>;
     using RowSPtr          = structures::RowSPtr<ValueType>;
-    using JobFn            = std::function<CSVContainerSPtr(const RowSPtr, const std::size_t, const CSVContainerSPtr, CSVContainerSPtr)>;
+    using JobFn            = std::function<CSVContainerSPtr(
+        const RowSPtr, const std::size_t, const CSVContainerSPtr, CSVContainerSPtr)>;
 
-    Job(const RowSPtr query, const std::size_t queryIdx, const CSVContainerSPtr dataset, CSVContainerSPtr result)
+    Job(const RowSPtr          query,
+        const std::size_t      queryIdx,
+        const CSVContainerSPtr dataset,
+        CSVContainerSPtr       result)
         : m_query(query)
         , m_queryIdx(queryIdx)
         , m_dataset(dataset)
         , m_result(result)
     {
-        m_fn = [this](const RowSPtr query, const std::size_t queryIdx, const CSVContainerSPtr dataset, CSVContainerSPtr result) {
-            const auto& crDataset = *dataset;
+        m_fn = [this](const RowSPtr          query,
+                      const std::size_t      queryIdx,
+                      const CSVContainerSPtr dataset,
+                      CSVContainerSPtr       result) {
+            const auto& crDataset     = *dataset;
             std::size_t datasetRowIdx = 0;
             for (const auto datasetRow : *dataset)
             {
@@ -39,9 +48,12 @@ public:
                                std::cbegin(*query),
                                std::back_inserter(*resultRow),
                                [](ValueType rhs, ValueType lhs) { return rhs - lhs; });
-                // TODO: What the heck?
-//                result[queryIdx + datasetRowIdx] = std::move(resultRow);
-                result->set(queryIdx + datasetRowIdx, std::move(resultRow));
+                assert(resultRow != nullptr);
+                gCoutMutex.lock();
+                std::cout << std::this_thread::get_id() << ": " << queryIdx << " " << datasetRowIdx
+                          << "\n";
+                gCoutMutex.unlock();
+                result->set(queryIdx + datasetRowIdx, resultRow);
                 datasetRowIdx++;
             }
             return result;
@@ -143,6 +155,7 @@ class ThreadPool
 public:
     ThreadPool(std::shared_ptr<JobQueue<ValueType>> jobQueue)
         : m_jobQueue(jobQueue)
+        , m_done(false)
     {
         auto workerLoop = [this]() {
             while (true)
@@ -158,15 +171,19 @@ public:
             }
         };
 
-        // TODO: Switch to rangev3 library
         for (auto idx : range(0, m_hwdThreadCount))
         {
             m_workers.emplace_back(std::thread(workerLoop));
         }
     }
 
-    ~ThreadPool()
+    bool done()
     {
+        if (m_done)
+        {
+            return true;
+        }
+
         for (auto& thread : m_workers)
         {
             if (thread.joinable())
@@ -174,6 +191,14 @@ public:
                 thread.join();
             }
         }
+
+        m_done = true;
+        return m_done;
+    }
+
+    ~ThreadPool()
+    {
+        done();
     }
 
 private:
@@ -181,6 +206,7 @@ private:
     std::vector<std::thread>             m_workers;
     std::vector<ThreadGuard>             m_workerGuards;
     std::shared_ptr<JobQueue<ValueType>> m_jobQueue;
+    bool                                 m_done;
 };
 
 } // namespace threadpool

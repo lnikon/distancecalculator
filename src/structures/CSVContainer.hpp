@@ -1,8 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <vector>
 #include <cassert>
+#include <memory>
+#include <mutex>
+#include <vector>
 
 namespace structures
 {
@@ -32,13 +33,13 @@ public:
 
     void set(const std::size_t idx, RowSPtr<ValueType> value)
     {
+        std::lock_guard<std::mutex> lg(m_mutex);
+        assert(idx < m_data.size());
         m_data[idx] = value;
     }
 
-    RowSPtr<ValueType>& operator[](std::size_t idx)       { return m_data[idx]; }
-    const RowSPtr<ValueType>& operator[](std::size_t idx) const { return m_data[idx]; }
-
 private:
+    std::mutex                      m_mutex;
     std::vector<RowSPtr<ValueType>> m_data;
 };
 
@@ -69,7 +70,7 @@ template <typename ValueType>
 void CSVContainer<ValueType>::resize(const std::size_t rowDim, const std::size_t)
 {
     assert(rowDim > 0);
-//    assert(colDim > 0);
+    //    assert(colDim > 0);
 
     m_data.resize(rowDim);
 }

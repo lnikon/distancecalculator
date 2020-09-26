@@ -7,22 +7,30 @@ template <typename ValueType>
 class CPPThreadsDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType>
 {
 public:
-    structures::CSVContainerSPtr<ValueType> calculate(structures::CSVContainerSPtr<ValueType> query, structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
+    structures::CSVContainerSPtr<ValueType>
+    calculate(structures::CSVContainerSPtr<ValueType> query,
+              structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
     {
-        auto result = std::make_shared<structures::CSVContainer<float>>();
-        result->resize(query->rowCount() * dataset->rowCount());
+        auto              result = std::make_shared<structures::CSVContainer<float>>();
+        const std::size_t distanceMatrixRowCnt = query->rowCount() * dataset->rowCount();
+        result->resize(distanceMatrixRowCnt);
+        std::cout << "Distance matrix dow count: " << distanceMatrixRowCnt << "\n";
 
-        auto jobs = std::make_shared<threadpool::JobQueue<float>>();
+        auto        jobs   = std::make_shared<threadpool::JobQueue<float>>();
         std::size_t rowIdx = 0;
         for (auto row : *query)
         {
-            auto job       = std::make_shared<threadpool::Job<float>>(row, rowIdx, dataset, result);
-            rowIdx++;
+            const std::size_t beginIdx = rowIdx * dataset->rowCount();
+            auto job = std::make_shared<threadpool::Job<float>>(row, beginIdx, dataset, result);
+
             jobs->push(job);
+            rowIdx++;
         }
 
         auto pool = threadpool::ThreadPool<float>(jobs);
-        while (!jobs->empty()) { }
+        while (!pool.done())
+        {
+        }
 
         return result;
     }
