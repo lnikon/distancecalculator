@@ -13,8 +13,6 @@
 namespace threadpool
 {
 
-std::mutex gCoutMutex;
-
 template <typename ValueType>
 class Job
 {
@@ -49,10 +47,6 @@ public:
                                std::back_inserter(*resultRow),
                                [](ValueType rhs, ValueType lhs) { return rhs - lhs; });
                 assert(resultRow != nullptr);
-                gCoutMutex.lock();
-                std::cout << std::this_thread::get_id() << ": " << queryIdx << " " << datasetRowIdx
-                          << "\n";
-                gCoutMutex.unlock();
                 result->set(queryIdx + datasetRowIdx, resultRow);
                 datasetRowIdx++;
             }

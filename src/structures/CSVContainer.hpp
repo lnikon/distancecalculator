@@ -31,6 +31,12 @@ public:
     typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin();
     typename std::vector<RowSPtr<ValueType>>::const_iterator cend();
 
+    RowSPtr<ValueType> get(const std::size_t idx) const
+    {
+        assert(idx < m_data.size());
+        return m_data[idx];
+    }
+
     void set(const std::size_t idx, RowSPtr<ValueType> value)
     {
         std::lock_guard<std::mutex> lg(m_mutex);

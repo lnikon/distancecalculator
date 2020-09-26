@@ -14,7 +14,6 @@ public:
         auto              result = std::make_shared<structures::CSVContainer<float>>();
         const std::size_t distanceMatrixRowCnt = query->rowCount() * dataset->rowCount();
         result->resize(distanceMatrixRowCnt);
-        std::cout << "Distance matrix dow count: " << distanceMatrixRowCnt << "\n";
 
         auto        jobs   = std::make_shared<threadpool::JobQueue<float>>();
         std::size_t rowIdx = 0;

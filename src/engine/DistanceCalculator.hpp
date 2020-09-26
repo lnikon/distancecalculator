@@ -23,18 +23,11 @@ public:
         }
     }
 
-    void calculate(structures::CSVContainerSPtr<ValueType> query,
-                   structures::CSVContainerSPtr<ValueType> dataset)
+    structures::CSVContainerSPtr<ValueType>
+    calculate(structures::CSVContainerSPtr<ValueType> query,
+              structures::CSVContainerSPtr<ValueType> dataset)
     {
-        auto distances = m_engine->calculate(query, dataset);
-        for (const auto& row : *distances)
-        {
-            for (const auto& item : *row)
-            {
-                std::cout << item << ' ';
-            }
-            std::cout << std::endl;
-        }
+        return m_engine->calculate(query, dataset);
     }
 
 private:

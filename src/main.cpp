@@ -29,7 +29,28 @@ int main(int argc, char** argv)
 
     DistanceCalculator<float> dc;
     dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::CPPThreads);
-    dc.calculate(query, dataset);
+    auto parallel = dc.calculate(query, dataset);
+    dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::Sequential);
+    auto sequential = dc.calculate(query, dataset);
+
+    const auto rowCount    = parallel->rowCount();
+    const auto columnCount = parallel->columnCount();
+    for (std::size_t rowIdx = 0; rowIdx < rowCount; rowIdx++)
+    {
+        for (std::size_t colIdx = 0; colIdx < columnCount; colIdx++)
+        {
+            const auto lhs = (*parallel->get(rowIdx))[colIdx];
+            const auto rhs = (*sequential->get(rowIdx))[colIdx];
+            if (lhs != rhs)
+            {
+                std::cout << "FAIL: Mismatch at (" << rowIdx << colIdx << "): " << lhs
+                          << " != " << rhs << "\n";
+                return 1;
+            }
+        }
+    }
+
+    std::cout << "PASS\n";
 
     return 0;
 }
