@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     auto dataset   = csvReader->read(datasetPath);
 
     DistanceCalculator<float> dc;
-    dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::CPPThreads);
+    dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::CUDA);
     auto parallel = dc.calculate(query, dataset);
     dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::Sequential);
     auto sequential = dc.calculate(query, dataset);
