@@ -2,8 +2,6 @@
 
 README is coming...
 
-[![Actions Status](https://github.com/lnikon/distancecalculator/workflows/superlint/badge.svg)](https://github.com/lnikon/distancecalculator/actions)
-
 ## Prerequisites
 
 Make sure that you've installed the following packages:
