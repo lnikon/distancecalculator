@@ -1,3 +1,3 @@
 # ToDo
 
-# Implement command line arguments parser
+* Implement command line arguments parser
