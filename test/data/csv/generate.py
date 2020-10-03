@@ -7,10 +7,12 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('rows', metavar='r', type=int,
-                        help='number of rows to generate')
-    parser.add_argument('columns', metavar='c', type=int,
-                        help='number of columns to generate')
+    parser.add_argument(
+        "rows", metavar="r", type=int, help="number of rows to generate"
+    )
+    parser.add_argument(
+        "columns", metavar="c", type=int, help="number of columns to generate"
+    )
     args = parser.parse_args()
     return args.rows, args.columns
 
@@ -30,5 +32,5 @@ def main():
     write_csv(rows, columns)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
