@@ -9,3 +9,5 @@ set_target_properties(CUDAMatrixDifference PROPERTIES CUDA_SEPARABLE_COMPILATION
 target_include_directories(CUDAMatrixDifference PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 target_link_libraries(CUDAMatrixDifference ${CUDART_LIBRARY})
 target_compile_features(CUDAMatrixDifference PUBLIC cxx_std_17)
+
+add_subdirectory(experiments)
