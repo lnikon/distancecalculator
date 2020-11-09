@@ -1,0 +1,8 @@
+before_install:
+  - 'sudo apt-get update'
+compiler: clang
+install:
+  - 'sudo apt-get install clang'
+  - 'export CXX="clang-10"'
+language: cpp
+script: 'bash -c ./build.sh'
