@@ -2,11 +2,10 @@ before_install:
   - 'sudo apt-get update'
   - 'wget https://github.com/Kitware/CMake/releases/download/v3.19.0-rc3/cmake-3.19.0-rc3-Linux-x86_64.tar.gz'
   - 'tar -xvf cmake-3.19.0-rc3-Linux-x86_64.tar.gz'
-  - 'export PATH=$PWD/cmake-3.19.0-rc3-Linux-x86_64.tar.gz:$PATH'
+  - 'export PATH=$PWD/cmake-3.19.0-rc3-Linux-x86_64/bin:$PATH'
 compiler: clang
 install:
-  - 'sudo apt-get install clang'
-  - 'export CXX="clang-6"'
+  - 'export CXX="clang"'
   - 'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -'
   - 'sudo apt-get update'
   - 'sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0
