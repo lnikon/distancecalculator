@@ -11,7 +11,6 @@ public:
   calculate(structures::CSVContainerSPtr<ValueType> query,
             structures::CSVContainerSPtr<ValueType>
                 dataset) /* noexcept */ const override {
-    kernel_for_test();
     return nullptr;
   }
 

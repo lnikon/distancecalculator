@@ -18,20 +18,25 @@ before_install:
   - 'wget https://github.com/ninja-build/ninja/releases/download/v1.9.0/ninja-linux.zip'
   - 'unzip ninja-linux.zip'
   - PATH=${PATH}:${PWD}
-  - 'export CXX="clang"'
-  - 'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -'
-  - 'sudo apt-get update'
-  - 'sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0
-    \ main"'
-  - 'sudo apt-get install -y clang-6.0 lld-6.0'
 before_script:
   - 'mkdir build'
   - 'cd build'
   - 'cmake .. -GNinja'
-compiler: clang
+compiler: gcc
 language: cpp
 matrix:
   include:
+    - addons:
+        apt:
+          packages:
+            - g++-9
+            - libpq-dev
+          sources:
+            - ubuntu-toolchain-r-test
+      compiler: gcc
+      env:
+        - CXX=g++-9
+        - CC=gcc-9
     - dist: xenial
       env:
         - CUDA=8.0.61-1
