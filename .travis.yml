@@ -21,7 +21,7 @@ before_install:
 before_script:
   - 'mkdir build'
   - 'cd build'
-  - 'cmake .. -GNinja'
+  - 'cmake .. -DBENCHMARK_DOWNLOAD_DEPENDENCIES=ON -GNinja'
 compiler: gcc
 language: cpp
 matrix:
