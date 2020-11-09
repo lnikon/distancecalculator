@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
@@ -50,9 +51,9 @@ int main(void)
 {
     srand(time(NULL));
 
-    int *a, *b, *c;
-    int *d_a, *d_b, *d_c;
-    int  size = TOTAL * sizeof(int);
+    int *     a, *b, *c;
+    int *     d_a, *d_b, *d_c;
+    const int size = TOTAL * sizeof(int);
 
     cudaMalloc((void**)&d_a, size);
     cudaMalloc((void**)&d_b, size);
@@ -67,13 +68,18 @@ int main(void)
     cudaMemcpy(d_a, a, size, cudaMemcpyHostToDevice);
     cudaMemcpy(d_b, b, size, cudaMemcpyHostToDevice);
 
-    add<<<(BLOCKS + THREADS - 1) / THREADS, THREADS>>>(d_a, d_b, d_c, TOTAL);
+    const int threadCount = THREADS;
+    const int blockCount  = TOTAL / threadCount;
+
+    std::cout << "\nBlockCount: " << blockCount << "\nThreadCount: " << threadCount << "\n";
+
+    add<<<blockCount, threadCount>>>(d_a, d_b, d_c, TOTAL);
 
     cudaMemcpy(c, d_c, size, cudaMemcpyDeviceToHost);
 
-    // print(a, TOTAL);
-    // print(b, TOTAL);
-    // print(c, TOTAL);
+    print(a, TOTAL);
+    print(b, TOTAL);
+    print(c, TOTAL);
 
     cudaFree(d_a);
     cudaFree(d_b);
@@ -94,6 +100,6 @@ void random_ints(int* a, const int n)
 void print(int* a, const int n)
 {
     for (int i = 0; i < n; ++i)
-        std::cout << a[i] << ' ';
+        std::cout << std::setw(4) << a[i] << ' ';
     std::cout << std::endl;
 }
