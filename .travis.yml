@@ -26,29 +26,6 @@ compiler: gcc
 language: cpp
 matrix:
   include:
-    - addons:
-        apt:
-          packages:
-            - g++-9
-            - libpq-dev
-          sources:
-            - ubuntu-toolchain-r-test
-      compiler: gcc
-      env:
-        - CXX=g++-9
-        - CC=gcc-9
-    - dist: xenial
-      env:
-        - CUDA=8.0.61-1
-        - CUDA_SHORT=8.0
-        - UBUNTU_VERSION=ubuntu1604
-      name: 'CUDA 8'
-    - dist: xenial
-      env:
-        - CUDA=9.2.148-1
-        - CUDA_SHORT=9.2
-        - UBUNTU_VERSION=ubuntu1604
-      name: 'CUDA 9'
     - dist: bionic
       env:
         - CUDA=10.1.105-1
