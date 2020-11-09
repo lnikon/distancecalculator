@@ -3,13 +3,52 @@ before_install:
   - 'wget https://github.com/Kitware/CMake/releases/download/v3.19.0-rc3/cmake-3.19.0-rc3-Linux-x86_64.tar.gz'
   - 'tar -xvf cmake-3.19.0-rc3-Linux-x86_64.tar.gz'
   - 'export PATH=$PWD/cmake-3.19.0-rc3-Linux-x86_64/bin:$PATH'
-compiler: clang
-install:
+  - INSTALLER=cuda-repo-${UBUNTU_VERSION}_${CUDA}_amd64.deb
+  - 'wget http://developer.download.nvidia.com/compute/cuda/repos/${UBUNTU_VERSION}/x86_64/${INSTALLER}'
+  - 'sudo dpkg -i ${INSTALLER}'
+  - 'wget https://developer.download.nvidia.com/compute/cuda/repos/${UBUNTU_VERSION}/x86_64/7fa2af80.pub'
+  - 'sudo apt-key add 7fa2af80.pub'
+  - 'sudo apt update -qq'
+  - 'sudo apt install -y cuda-core-${CUDA_SHORT/./-} cuda-cudart-dev-${CUDA_SHORT/./-}
+    cuda-cufft-dev-${CUDA_SHORT/./-}'
+  - 'sudo apt clean'
+  - CUDA_HOME=/usr/local/cuda-${CUDA_SHORT}
+  - LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+  - PATH=${CUDA_HOME}/bin:${PATH}
+  - 'wget https://github.com/ninja-build/ninja/releases/download/v1.9.0/ninja-linux.zip'
+  - 'unzip ninja-linux.zip'
+  - PATH=${PATH}:${PWD}
   - 'export CXX="clang"'
   - 'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -'
   - 'sudo apt-get update'
   - 'sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0
     \ main"'
   - 'sudo apt-get install -y clang-6.0 lld-6.0'
+before_script:
+  - 'mkdir build'
+  - 'cd build'
+  - 'cmake .. -GNinja'
+compiler: clang
 language: cpp
-script: 'bash -c ./build.sh'
+matrix:
+  include:
+    - dist: xenial
+      env:
+        - CUDA=8.0.61-1
+        - CUDA_SHORT=8.0
+        - UBUNTU_VERSION=ubuntu1604
+      name: 'CUDA 8'
+    - dist: xenial
+      env:
+        - CUDA=9.2.148-1
+        - CUDA_SHORT=9.2
+        - UBUNTU_VERSION=ubuntu1604
+      name: 'CUDA 9'
+    - dist: bionic
+      env:
+        - CUDA=10.1.105-1
+        - CUDA_SHORT=10.1
+        - UBUNTU_VERSION=ubuntu1804
+      name: 'CUDA 10'
+script: ninja
+sudo: enabled
