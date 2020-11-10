@@ -2,6 +2,7 @@
 
 #include "CSVContainer.hpp"
 
+#include <algorithm>
 #include <functional>
 #include <iostream>
 #include <memory>

@@ -26,11 +26,16 @@ compiler: gcc
 language: cpp
 matrix:
   include:
-    - dist: bionic
+    - addons:
+        sources:
+          - sourceline: ppa:ubuntu-toolchain-r/test
+        update: true
+      dist: bionic
       env:
         - CUDA=10.1.105-1
         - CUDA_SHORT=10.1
         - UBUNTU_VERSION=ubuntu1804
+        - 'CC=gcc-10 CXX=g++-10'
       name: 'CUDA 10'
 script: ninja
 sudo: enabled
