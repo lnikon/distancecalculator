@@ -5,7 +5,6 @@
 #include "Path.hpp"
 #include "Utility.hpp"
 
-#include <filesystem>
 #include <fstream>
 #include <sstream>
 

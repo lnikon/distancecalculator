@@ -6,21 +6,21 @@
 
 #include <memory>
 
-TEST_CASE("ThreadPool: Execute one job", "[threadpool]")
-{
-    auto jobs = std::make_shared<threadpool::JobQueue<float>>();
-    auto pool = threadpool::ThreadPool<float>(jobs);
-
-    for (int i : threadpool::range(0, 100))
-    {
-        auto result = std::make_shared<structures::CSVContainer<float>>();
-        auto container = std::make_shared<structures::CSVContainer<float>>();
-        auto row       = std::make_shared<structures::Row<float>>();
-        auto job       = std::make_shared<threadpool::Job<float>>(row, i, container, result);
-        jobs->push(job);
-    }
-
-    while (true)
-    {
-    }
+TEST_CASE("ThreadPool: Execute one job", "[threadpool]") {
+  //    auto jobs = std::make_shared<threadpool::JobQueue<float>>();
+  //    auto pool = threadpool::ThreadPool<float>(jobs);
+  //
+  //    for (int i : threadpool::range(0, 100))
+  //    {
+  //        auto result = std::make_shared<structures::CSVContainer<float>>();
+  //        auto container =
+  //        std::make_shared<structures::CSVContainer<float>>(); auto row =
+  //        std::make_shared<structures::Row<float>>(); auto job       =
+  //        std::make_shared<threadpool::Job<float>>(row, i, container, result);
+  //        jobs->push(job);
+  //    }
+  //
+  //    while (true)
+  //    {
+  //    }
 }
