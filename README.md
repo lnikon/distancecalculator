@@ -1,6 +1,6 @@
 # Distance Calculator
 
-README is coming...
+![Travis CI Build Status](https://travis-ci.com/lnikon/distancecalculator.svg?branch=master)
 
 ## Prerequisites
 
