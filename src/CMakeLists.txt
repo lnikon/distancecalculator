@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(distancecalculator)
+project(distancecalculator LANGUAGES C CXX CUDA)
 
 add_executable(disc main.cpp)
 target_link_libraries(disc PRIVATE engine readers)

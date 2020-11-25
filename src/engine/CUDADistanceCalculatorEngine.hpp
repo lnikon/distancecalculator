@@ -3,6 +3,8 @@
 #include "IDistanceCalculatorEngine.hpp"
 #include "MatrixDifference.cuh"
 
+#include <memory>
+
 template <typename ValueType>
 class CUDADistanceCalculatorEngine
     : public IDistanceCalculatorEngine<ValueType> {
@@ -11,6 +13,7 @@ public:
   calculate(structures::CSVContainerSPtr<ValueType> query,
             structures::CSVContainerSPtr<ValueType>
                 dataset) /* noexcept */ const override {
+    L1DistanceRunner();
     return nullptr;
   }
 
