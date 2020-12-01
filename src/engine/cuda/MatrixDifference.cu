@@ -1,6 +1,5 @@
 #pragma CUDA_MATRIX_DIFFERENCE
 
-#include <cuda.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -16,7 +15,7 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
    }
 }
 
-__global__ void L1Distance(int* query, int* dataset, int* distances, int queryRowCount, int datasetRowCount, int columnCount) {
+__global__ void L1Distance(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount) {
 	int row = threadIdx.x + blockDim.x * blockIdx.x;
 	
 	int queryIndex = row % queryRowCount;
@@ -39,20 +38,20 @@ void L1DistanceRunner()
 	const int columnCount = 16;
 
 	const int querySize = queryRowCount * columnCount;
-	int* query = new int[querySize];
+	float* query = new float[querySize];
 	for (int i = 0; i < querySize; i++) {
 		query[i] = 10;
 	}
 
 	const int datasetSize = datasetRowCount * columnCount;
-	int* dataset = new int[datasetSize];
+	float* dataset = new float[datasetSize];
 	for (int i = 0; i < datasetSize; i++) {
 		dataset[i] = 20;
 	}
 
 	const int distancesSize = rowCountDistances * columnCount;
-	int* distances = new int[distancesSize];
-	int* correctDistances = new int[distancesSize];
+	float* distances = new float[distancesSize];
+	float* correctDistances = new float[distancesSize];
 
 	for (int i = 0; i < rowCountDistances; i++) {
 		for (int j = 0; j < queryRowCount; j++) {
@@ -64,16 +63,16 @@ void L1DistanceRunner()
 		}
 	}
 
-	int* deviceQuery;
-	gpuErrchk(cudaMalloc(&deviceQuery, sizeof(int) * querySize));
-	gpuErrchk(cudaMemcpy(deviceQuery, query, sizeof(int) * querySize, cudaMemcpyHostToDevice));
+	float* deviceQuery;
+	gpuErrchk(cudaMalloc(&deviceQuery, sizeof(float) * querySize));
+	gpuErrchk(cudaMemcpy(deviceQuery, query, sizeof(float) * querySize, cudaMemcpyHostToDevice));
 
-	int* deviceDataset;
-	gpuErrchk(cudaMalloc(&deviceDataset, sizeof(int) * datasetSize));
-	gpuErrchk(cudaMemcpy(deviceDataset, dataset, sizeof(int) * datasetSize, cudaMemcpyHostToDevice));
+	float* deviceDataset;
+	gpuErrchk(cudaMalloc(&deviceDataset, sizeof(float) * datasetSize));
+	gpuErrchk(cudaMemcpy(deviceDataset, dataset, sizeof(float) * datasetSize, cudaMemcpyHostToDevice));
 
-	int* deviceDistances;
-	gpuErrchk(cudaMalloc(&deviceDistances, sizeof(int) * distancesSize));
+	float* deviceDistances;
+	gpuErrchk(cudaMalloc(&deviceDistances, sizeof(float) * distancesSize));
 
 	const int blockSize = 1024;
 	const int gridRows = (distancesSize + blockSize - 1) / blockSize;
@@ -85,7 +84,7 @@ void L1DistanceRunner()
 	L1Distance<<<gridDim, blockDim>>>(deviceQuery, deviceDataset, deviceDistances, queryRowCount, datasetRowCount, columnCount);
 	gpuErrchk(cudaPeekAtLastError());
 	gpuErrchk(cudaDeviceSynchronize());
-	gpuErrchk(cudaMemcpy(distances, deviceDistances, sizeof(int) * distancesSize, cudaMemcpyDeviceToHost));
+	gpuErrchk(cudaMemcpy(distances, deviceDistances, sizeof(float) * distancesSize, cudaMemcpyDeviceToHost));
 
 	cudaFree(deviceQuery);
 	cudaFree(deviceDataset);
