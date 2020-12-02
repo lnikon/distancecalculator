@@ -11,6 +11,8 @@ public:
     calculate(structures::CSVContainerSPtr<ValueType> query,
               structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
     {
+		assert(query != nullptr);
+		assert(dataset != nullptr);
         const std::size_t distanceMatrixRowCnt = query->rowCount() * dataset->rowCount();
         auto              result = std::make_shared<structures::CSVContainer<float>>();
         result->resize(distanceMatrixRowCnt);

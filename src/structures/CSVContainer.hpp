@@ -46,18 +46,20 @@ public:
     typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin();
     typename std::vector<RowSPtr<ValueType>>::const_iterator cend();
 
-    void print()
-    {
-        for (auto row : range(rowCount()))
-        {
-            for (auto col : range(columnCount()))
-            {
-                std::cout << m_data[row][col] << ' ';
-            }
-            std::cout << '\n';
-        }
-        std::cout << '\n';
-    }
+	ValueType* data() {
+		assert(m_data.size() > 0);
+		assert(m_data[0]->size() > 0);
+		const std::size_t rowDim = m_data.size();
+		const std::size_t colDim = m_data[0]->size();
+		ValueType* raw = new ValueType[rowDim * colDim];
+		for (std::size_t i = 0; i < rowDim; ++i) {
+			for (std::size_t j = 0; j < colDim; ++j) {
+				raw[i * colDim + j] = (*m_data[i])[j];
+			}
+		}
+
+		return raw;
+	}
 
     RowSPtr<ValueType> get(const std::size_t idx) const
     {
@@ -112,7 +114,13 @@ template <typename ValueType>
 void CSVContainer<ValueType>::append(RowSPtr<ValueType> row)
 {
 	std::lock_guard lg(m_mutex);
-    if (row->size() > columnCount())
+	auto colDim = (m_data.size() == 0);
+	if (!colDim) {
+		assert(m_data[0] != nullptr);
+		colDim = m_data[0]->size();
+	}
+
+    if (row->size() > colDim)
     {
         for (auto& ptr : m_data)
         {

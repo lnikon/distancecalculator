@@ -5,4 +5,4 @@
 
 __global__ void matrix_for_test(int* a, int* b, int* c, int m, int n, int k);
 
-void L1DistanceRunner();
+void L1DistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount);

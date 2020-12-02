@@ -17,51 +17,26 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 
 __global__ void L1Distance(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount) {
 	int row = threadIdx.x + blockDim.x * blockIdx.x;
-	
-	int queryIndex = row % queryRowCount;
-	assert(queryIndex < queryRowCount);
-	int datasetIndex = row % datasetRowCount;
-	assert(datasetIndex < datasetRowCount);
 
-	if (row < queryRowCount * datasetRowCount * columnCount) {
-		for (int diffIdx = 0; diffIdx < columnCount; diffIdx++) {
-			distances[row] = dataset[datasetIndex + diffIdx] - query[queryIndex + diffIdx];
+	if (row < queryRowCount) {
+		for (int dRow = 0; dRow < datasetRowCount; dRow++) {
+			for (int column = 0; column < columnCount; ++column) {
+				int dcc = dRow * columnCount + column;
+				int qcc = row * columnCount + column;
+				int drcc = row * queryRowCount * columnCount + dcc;
+				distances[drcc] = dataset[dcc] - query[qcc];
+			}
 		}
 	}
 }
 
-void L1DistanceRunner()
+void L1DistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount)
 {
-	const int queryRowCount = 16;
-	const int datasetRowCount = 2*queryRowCount;
 	const int rowCountDistances = queryRowCount * datasetRowCount;
-	const int columnCount = 16;
-
+	printf("rowCountDistances=%d\n", rowCountDistances);
 	const int querySize = queryRowCount * columnCount;
-	float* query = new float[querySize];
-	for (int i = 0; i < querySize; i++) {
-		query[i] = 10;
-	}
-
 	const int datasetSize = datasetRowCount * columnCount;
-	float* dataset = new float[datasetSize];
-	for (int i = 0; i < datasetSize; i++) {
-		dataset[i] = 20;
-	}
-
 	const int distancesSize = rowCountDistances * columnCount;
-	float* distances = new float[distancesSize];
-	float* correctDistances = new float[distancesSize];
-
-	for (int i = 0; i < rowCountDistances; i++) {
-		for (int j = 0; j < queryRowCount; j++) {
-			for (int k = 0; k < datasetRowCount; k++) {
-				for (int p = 0; p < columnCount; p++) {
-					correctDistances[i + p] = dataset[k * datasetRowCount + p] - query[j * queryRowCount + p];
-				}
-			}
-		}
-	}
 
 	float* deviceQuery;
 	gpuErrchk(cudaMalloc(&deviceQuery, sizeof(float) * querySize));
@@ -75,11 +50,9 @@ void L1DistanceRunner()
 	gpuErrchk(cudaMalloc(&deviceDistances, sizeof(float) * distancesSize));
 
 	const int blockSize = 1024;
-	const int gridRows = (distancesSize + blockSize - 1) / blockSize;
+	const int gridRows = (rowCountDistances + blockSize - 1) / blockSize;
 	dim3 gridDim(gridRows);
 	dim3 blockDim(blockSize);
-	printf("gridDim: (%d)\n", gridRows);
-	printf("blockDim: (%d)\n", blockSize);
 
 	L1Distance<<<gridDim, blockDim>>>(deviceQuery, deviceDataset, deviceDistances, queryRowCount, datasetRowCount, columnCount);
 	gpuErrchk(cudaPeekAtLastError());

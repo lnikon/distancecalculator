@@ -20,15 +20,16 @@ template <typename ValueType>
 structures::CSVContainerSPtr<ValueType>
 CSVReader<ValueType>::read(const Path &path) const {
   if (path.empty()) {
-    // TODO: throw exception
-    return nullptr;
+	  throw std::runtime_error("can\'t read when path is empty");
   }
 
   auto csvContainer = std::make_shared<structures::CSVContainer<ValueType>>();
   std::fstream inStream(path);
   if (!inStream.is_open()) {
-    // TODO: throw exception
-    return nullptr;
+	  std::string msg("can\'t open ");
+	  msg += path;
+	  msg += std::string(" to read\n");
+	  throw std::runtime_error(msg.data());
   }
 
   std::string line;
