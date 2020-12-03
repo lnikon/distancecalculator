@@ -4,6 +4,7 @@ project(distancecalculator LANGUAGES CXX CUDA)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # CUDA Support
+set(USE_CUDA_ENGINE OFF)
 add_definitions(-DSUPPORT_CUDA_ENGINE=${USE_CUDA_ENGINE}) 
 
 find_package(Threads)
