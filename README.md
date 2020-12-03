@@ -45,9 +45,9 @@ git submodule init
 git submodule update
 ```
 
-To build run the following instructions:
 CUDA based calculation engine support is initially disabled. If you wish to enable then pass -DSUPPORT_CUDA_ENGINE=ON to cmake.
 
+To build run the following instructions:
 ```sh
 mkdir build && cd build
 cmake .. -G "Unix Makefiles"
