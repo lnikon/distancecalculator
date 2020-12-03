@@ -1,7 +1,10 @@
 #pragma once
 
 #include "IDistanceCalculatorEngine.hpp"
+
+#if SUPPORT_CUDA_ENGINE
 #include "MatrixDifference.cuh"
+#endif
 
 #include <memory>
 #include <cassert>
@@ -14,6 +17,7 @@ public:
     calculate(structures::CSVContainerSPtr<ValueType> query,
               structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
     {
+#if SUPPORT_CUDA_ENGINE
 		assert(query->rowCount() > 0);
 		assert(dataset->rowCount() > 0);
 		assert(query->columnCount() == dataset->columnCount());	
@@ -34,6 +38,8 @@ public:
 
 		auto csvContainer = std::make_shared<typename structures::CSVContainer<float>>(rawDistances, distancesRowCount, distancesColumnCount);
 		return csvContainer;
+#endif
+		return nullptr;
     }
 
     DistanceCalculatorEngineType type() const /* noexcept */ override

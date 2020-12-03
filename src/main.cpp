@@ -30,23 +30,22 @@ int main(int argc, char** argv)
     auto dataset   = csvReader->read(datasetPath);
 
     DistanceCalculator<float> dc;
-    // dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::CPPThreads);
     dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::CUDA);
 
     auto start    = std::chrono::steady_clock::now();
     auto parallel = dc.calculate(query, dataset);
-	assert(parallel != nullptr);
-    auto end      = std::chrono::steady_clock::now();
+    assert(parallel != nullptr);
+    auto end = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> elapsed_seconds = end - start;
-    std::cout << "elapsed time cuda: " << elapsed_seconds.count() << "s\n";
+    std::cout << "elapsed time thread pool: " << elapsed_seconds.count() << "s\n";
 
     dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::Sequential);
 
-    start    = std::chrono::steady_clock::now();
+    start           = std::chrono::steady_clock::now();
     auto sequential = dc.calculate(query, dataset);
     assert(sequential != nullptr);
-    end      = std::chrono::steady_clock::now();
+    end = std::chrono::steady_clock::now();
 
     elapsed_seconds = end - start;
     std::cout << "elapsed time thread serial: " << elapsed_seconds.count() << "s\n";
@@ -68,7 +67,7 @@ int main(int argc, char** argv)
             } /* else {
                  std::cout << "PASS: Equal at (" << rowIdx << colIdx << "): " << lhs
                  << " != " << rhs << "\n";
-				 } */
+                 } */
         }
     }
 
