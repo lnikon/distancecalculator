@@ -77,7 +77,7 @@ private:
 		{
 			thread_pool->m_threads_sem.Wait();
 
-			if (thread_pool->m_terminate)
+			if (thread_pool->m_terminate && m_tasks.empty())
 			{
 				break;
 			}
@@ -87,12 +87,12 @@ private:
 			thread_pool->m_tasks.pop();
 			thread_pool->m_tasks_sem.Signal();
 
-			if (thread_pool->m_terminate)
+			task();
+
+			if (thread_pool->m_terminate && m_tasks.empty())
 			{
 				break;
 			}
-
-			task();
 		}
 	}
 

@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     auto dataset   = csvReader->read(datasetPath);
 
     DistanceCalculator<float> dc;
-    dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::CPPThreads);
+    dc.setDistanceCalculatorEngineKind(DistanceCalculatorEngineKind::CPPThreads);
 
     auto start    = std::chrono::steady_clock::now();
     auto parallel = dc.calculate(query, dataset);
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "elapsed time thread pool: " << elapsed_seconds.count() << "s\n";
 
-    dc.setDistanceCalculatorEngineType(DistanceCalculatorEngineType::Sequential);
+    dc.setDistanceCalculatorEngineKind(DistanceCalculatorEngineKind::Sequential);
 
     start           = std::chrono::steady_clock::now();
     auto sequential = dc.calculate(query, dataset);
@@ -52,8 +52,6 @@ int main(int argc, char** argv)
 
 	assert(parallel->rowCount() == sequential->rowCount());
 	assert(parallel->rowCount() == sequential->rowCount());
-	std::cout << "rowCount=" << parallel->rowCount() << "\n";
-	std::cout << "columnCount=" << parallel->columnCount() << "\n";
 	assert(parallel->columnCount() == sequential->columnCount());
 
     /* Verification of a selected calculation engine with the naive one */
@@ -63,21 +61,16 @@ int main(int argc, char** argv)
     {
         for (std::size_t colIdx = 0; colIdx < columnCount; colIdx++)
         {
-			// std::cout << "rowIdx= " << rowIdx << ", colIdx=" << colIdx << "\n";
             const auto lhs = (*parallel->get(rowIdx))[colIdx];
-            /* if (lhs != rhs)
+            const auto rhs = (*sequential->get(rowIdx))[colIdx];
+			if (lhs != rhs)
             {
                 std::cout << "FAIL: Mismatch at (" << rowIdx << ", " << colIdx << "): " << lhs
                           << " != " << rhs << "\n";
                 return 1;
-            } /* else {
-                 std::cout << "PASS: Equal at (" << rowIdx << colIdx << "): " << lhs
-                 << " != " << rhs << "\n";
-                 } */
+            } 
         }
     }
-
-    std::cout << "PASS\n";
 
     return 0;
 }

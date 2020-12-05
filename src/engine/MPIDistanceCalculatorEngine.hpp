@@ -20,8 +20,8 @@ public:
     return nullptr;
   }
 
-  DistanceCalculatorEngineType type() /* noexcept */ const override {
-    return DistanceCalculatorEngineType::MPI;
+  DistanceCalculatorEngineKind type() /* noexcept */ const override {
+    return DistanceCalculatorEngineKind::MPI;
   }
 
 private:

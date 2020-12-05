@@ -42,8 +42,8 @@ public:
 		return nullptr;
     }
 
-    DistanceCalculatorEngineType type() const /* noexcept */ override
+    DistanceCalculatorEngineKind type() const /* noexcept */ override
     {
-        return DistanceCalculatorEngineType::CUDA;
+        return DistanceCalculatorEngineKind::CUDA;
     }
 };

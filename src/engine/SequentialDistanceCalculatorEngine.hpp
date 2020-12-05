@@ -39,8 +39,8 @@ public:
         return result;
     }
 
-    DistanceCalculatorEngineType type() /* noexcept */ const override
+    DistanceCalculatorEngineKind type() /* noexcept */ const override
     {
-        return DistanceCalculatorEngineType::Sequential;
+        return DistanceCalculatorEngineKind::Sequential;
     }
 };

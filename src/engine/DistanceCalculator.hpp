@@ -4,7 +4,7 @@
 #include "CSVContainer.hpp"
 #include "CUDADistanceCalculatorEngine.hpp"
 #include "DistanceCalculatorEngineFactory.hpp"
-#include "DistanceCalculatorEngineType.hpp"
+#include "DistanceCalculatorEngineKind.hpp"
 #include "IDistanceCalculatorEngine.hpp"
 #include "MPIDistanceCalculatorEngine.hpp"
 #include "SequentialDistanceCalculatorEngine.hpp"
@@ -14,7 +14,7 @@
 template <typename ValueType> class DistanceCalculator {
 public:
   void
-  setDistanceCalculatorEngineType(const DistanceCalculatorEngineType type) {
+  setDistanceCalculatorEngineKind(const DistanceCalculatorEngineKind type) {
     if (auto engine = distanceCalculatorEngineFactory<ValueType>(type);
         engine != nullptr) {
       m_engine = engine;
