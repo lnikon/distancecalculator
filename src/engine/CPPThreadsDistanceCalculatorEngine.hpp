@@ -60,8 +60,8 @@ struct Submitter<ValueType, MetricKind::HammingDistance>
     }
 };
 
-template <typename ValueType, MetricKind kind=MetricKind::L1Metric>
-class CPPThreadsDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType>
+template <typename ValueType, MetricKind kind=MetricKind::L2Metric>
+class CPPThreadsDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType, kind>
 {
 public:
     structures::CSVContainerSPtr<ValueType>

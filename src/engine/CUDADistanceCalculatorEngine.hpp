@@ -1,45 +1,75 @@
 #pragma once
 
+#include "DistanceCalculatorEngineMetricKind.hpp"
 #include "IDistanceCalculatorEngine.hpp"
+#include "stdthreads/HammingDistance.hpp"
+#include "stdthreads/LNMetric.hpp"
+#include "stdthreads/MetricBase.hpp"
 
-#if SUPPORT_CUDA_ENGINE
 #include "MatrixDifference.cuh"
-#endif
 
-#include <memory>
 #include <cassert>
+#include <iostream>
+#include <memory>
 
-template <typename ValueType>
-class CUDADistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType>
+template <typename ValueType, MetricKind kind = MetricKind::L2Metric>
+class CUDADistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType, kind>
 {
 public:
     structures::CSVContainerSPtr<ValueType>
     calculate(structures::CSVContainerSPtr<ValueType> query,
               structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
     {
-#if SUPPORT_CUDA_ENGINE
-		assert(query->rowCount() > 0);
-		assert(dataset->rowCount() > 0);
-		assert(query->columnCount() == dataset->columnCount());	
+        std::cout << "Hello privet\n";
+        assert(query->rowCount() > 0);
+        assert(dataset->rowCount() > 0);
+        assert(query->columnCount() == dataset->columnCount());
 
-		const auto queryRowCount = query->rowCount();
-		const auto queryColumnCount = query->columnCount();
-		ValueType* rawQuery = query->data();
+        const auto queryRowCount    = query->rowCount();
+        const auto queryColumnCount = query->columnCount();
+        ValueType* rawQuery         = query->data();
 
-		const auto datasetRowCount = dataset->rowCount();
-		const auto datasetColumnCount = dataset->columnCount();
-		ValueType* rawDataset = dataset->data();
+        const auto datasetRowCount    = dataset->rowCount();
+        const auto datasetColumnCount = dataset->columnCount();
+        ValueType* rawDataset         = dataset->data();
 
-		const auto distancesRowCount = queryRowCount * datasetRowCount;
-		const auto distancesColumnCount = queryColumnCount;
-		ValueType* rawDistances = new ValueType[distancesRowCount * distancesColumnCount];
+        const auto distancesRowCount    = queryRowCount * datasetRowCount;
+        const auto distancesColumnCount = queryColumnCount;
+        ValueType* rawDistances         = new ValueType[distancesRowCount * distancesColumnCount];
 
-		L1DistanceRunner(rawQuery, rawDataset, rawDistances, queryRowCount, datasetRowCount, queryColumnCount);
+        switch (kind)
+        {
+        case MetricKind::L1Metric:
+            L1DistanceRunner(rawQuery,
+                             rawDataset,
+                             rawDistances,
+                             queryRowCount,
+                             datasetRowCount,
+                             queryColumnCount);
+            break;
+        case MetricKind::L2Metric:
+            L2DistanceRunner(rawQuery,
+                             rawDataset,
+                             rawDistances,
+                             queryRowCount,
+                             datasetRowCount,
+                             queryColumnCount);
+            break;
+        case MetricKind::HammingDistance:
+            HammingDistanceRunner(rawQuery,
+                                  rawDataset,
+                                  rawDistances,
+                                  queryRowCount,
+                                  datasetRowCount,
+                                  queryColumnCount);
+            break;
+        default:
+            return nullptr;
+        }
 
-		auto csvContainer = std::make_shared<typename structures::CSVContainer<float>>(rawDistances, distancesRowCount, distancesColumnCount);
-		return csvContainer;
-#endif
-		return nullptr;
+        auto csvContainer = std::make_shared<typename structures::CSVContainer<float>>(
+            rawDistances, distancesRowCount, distancesColumnCount);
+        return csvContainer;
     }
 
     DistanceCalculatorEngineKind type() const /* noexcept */ override

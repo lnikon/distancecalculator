@@ -3,6 +3,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-__global__ void matrix_for_test(int* a, int* b, int* c, int m, int n, int k);
-
 void L1DistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount);
+void L2DistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount);
+void HammingDistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount);
+

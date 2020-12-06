@@ -2,19 +2,18 @@
 
 #include "IDistanceCalculatorEngine.hpp"
 
-template <typename ValueType>
-class SequentialDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType>
+template <typename ValueType, MetricKind kind = MetricKind::L2Metric>
+class SequentialDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType, kind>
 {
 public:
     structures::CSVContainerSPtr<ValueType>
     calculate(structures::CSVContainerSPtr<ValueType> query,
-              structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
+              structures::CSVContainerSPtr<ValueType> dataset) const override
     {
         auto              result = std::make_shared<structures::CSVContainer<float>>();
         const std::size_t distanceMatrixRowCnt = query->rowCount() * dataset->rowCount();
         result->resize(distanceMatrixRowCnt);
 
-        // Using simple L1 norm
         const auto  queryRowCount      = query->rowCount();
         const auto  queryColumnCount   = query->columnCount();
         const auto  datasetRowCount    = dataset->rowCount();

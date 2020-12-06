@@ -9,20 +9,20 @@
 
 #include <memory>
 
-template <typename ValueType>
-std::shared_ptr<IDistanceCalculatorEngine<ValueType>>
+template <typename ValueType, MetricKind kind = MetricKind::L2Metric>
+std::shared_ptr<IDistanceCalculatorEngine<ValueType, kind>>
 distanceCalculatorEngineFactory(const EngineKind engineKind)
 {
     switch (engineKind)
     {
     case EngineKind::Sequential:
-        return std::make_shared<SequentialDistanceCalculatorEngine<ValueType>>();
+        return std::make_shared<SequentialDistanceCalculatorEngine<ValueType, kind>>();
     case EngineKind::CPPThreads:
-        return std::make_shared<CPPThreadsDistanceCalculatorEngine<ValueType>>();
+        return std::make_shared<CPPThreadsDistanceCalculatorEngine<ValueType, kind>>();
     case EngineKind::CUDA:
-        return std::make_shared<CUDADistanceCalculatorEngine<ValueType>>();
+        return std::make_shared<CUDADistanceCalculatorEngine<ValueType, kind>>();
     case EngineKind::MPI:
-        return std::make_shared<MPIDistanceCalculatorEngine<ValueType>>();
+        return std::make_shared<MPIDistanceCalculatorEngine<ValueType, kind>>();
     default:
         return nullptr;
     }

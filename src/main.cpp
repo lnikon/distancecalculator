@@ -29,8 +29,8 @@ int main(int argc, char** argv)
     auto query     = csvReader->read(queryPath);
     auto dataset   = csvReader->read(datasetPath);
 
-    DistanceCalculator<float> dc;
-    dc.setDistanceCalculatorEngineKind(DistanceCalculatorEngineKind::CPPThreads);
+    DistanceCalculator<float, MetricKind::L1Metric> dc;
+    dc.setDistanceCalculatorEngineKind(DistanceCalculatorEngineKind::CUDA);
 
     auto start    = std::chrono::steady_clock::now();
     auto parallel = dc.calculate(query, dataset);
@@ -38,9 +38,9 @@ int main(int argc, char** argv)
     auto end = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> elapsed_seconds = end - start;
-    std::cout << "elapsed time thread pool: " << elapsed_seconds.count() << "s\n";
+    std::cout << "elapsed time cuda: " << elapsed_seconds.count() << "s\n";
 
-    dc.setDistanceCalculatorEngineKind(DistanceCalculatorEngineKind::Sequential);
+    dc.setDistanceCalculatorEngineKind(DistanceCalculatorEngineKind::CPPThreads);
 
     start           = std::chrono::steady_clock::now();
     auto sequential = dc.calculate(query, dataset);
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     end = std::chrono::steady_clock::now();
 
     elapsed_seconds = end - start;
-    std::cout << "elapsed time thread serial: " << elapsed_seconds.count() << "s\n";
+    std::cout << "elapsed time thread pool: " << elapsed_seconds.count() << "s\n";
 
 	assert(parallel->rowCount() == sequential->rowCount());
 	assert(parallel->rowCount() == sequential->rowCount());
@@ -71,6 +71,8 @@ int main(int argc, char** argv)
             } 
         }
     }
+
+	std::cout << "PASS\n";
 
     return 0;
 }

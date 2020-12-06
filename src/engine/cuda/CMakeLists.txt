@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(distancecalculator LANGUAGES CXX CUDA)
+project(distancecalculator LANGUAGES CUDA)
 
 find_library(CUDART_LIBRARY cudart ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 
