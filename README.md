@@ -53,3 +53,17 @@ mkdir build && cd build
 cmake .. -G "Unix Makefiles"
 make -j4
 ```
+
+## Running Unit Tests
+
+Unit Tests are located under ```./build/tests``` directory. Some of the tests need to know the project root path, so before running the tests make sure to export following variable(s) from the project root:
+
+```sh
+export DISC_PROJECT_ROOT=$(pwd)
+```
+
+## ToDo
+
+* Implement memory owernship strategies
+* Implement index sets and generators
+* Provide python bindings

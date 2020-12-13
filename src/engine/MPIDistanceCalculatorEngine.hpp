@@ -2,6 +2,7 @@
 
 #include "IDistanceCalculatorEngine.hpp"
 
+
 template <typename ValueType, MetricKind kind = MetricKind::L2Metric>
 class MPIDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType, kind>
 {

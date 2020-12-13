@@ -20,7 +20,6 @@ public:
     calculate(structures::CSVContainerSPtr<ValueType> query,
               structures::CSVContainerSPtr<ValueType> dataset) /* noexcept */ const override
     {
-        std::cout << "Hello privet\n";
         assert(query->rowCount() > 0);
         assert(dataset->rowCount() > 0);
         assert(query->columnCount() == dataset->columnCount());

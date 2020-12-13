@@ -26,7 +26,6 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
         throw std::runtime_error("can\'t read when path is empty");
     }
 
-    auto         csvContainer = std::make_shared<structures::CSVContainer<ValueType>>();
     std::fstream inStream(path);
     if (!inStream.is_open())
     {
@@ -36,7 +35,16 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
         throw std::runtime_error(msg.data());
     }
 
+    // Calculate number of rows
+    const std::size_t rowCount    = countLines(inStream);
+    const std::size_t columnCount = countColumns(inStream);
+    assert(columnCount > 0);
+
+    auto csvContainer = std::make_shared<structures::CSVContainer<ValueType>>();
+    csvContainer->resize(rowCount, columnCount);
+
     std::string line;
+	std::size_t lineNumber{0};
     while (std::getline(inStream, line))
     {
         line = trim(line);
@@ -45,8 +53,8 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
             continue;
         }
 
-        auto tokens       = tokenize(line);
-        auto row          = std::make_shared<typename structures::Row<ValueType>>();
+
+        auto tokens = tokenize(line);
         auto columnNumber = std::size_t{};
         for (const auto& token : tokens)
         {
@@ -57,14 +65,15 @@ structures::CSVContainerSPtr<ValueType> CSVReader<ValueType>::read(const Path& p
             {
                 std::runtime_error e("Unable to parse token: \"" + token + "\" at line " +
                                      std::to_string(csvContainer->rowCount()) + ", column " +
-                                     std::to_string(row->size()));
+                                     std::to_string(csvContainer->columnCount()));
                 throw e;
             }
 
-            row->emplace_back(std::move(value));
+            csvContainer->set(lineNumber, columnNumber, std::move(value));
+			columnNumber++;
         }
-
-        csvContainer->append(row);
+		
+		lineNumber++;
     }
 
     return csvContainer;

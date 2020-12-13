@@ -61,8 +61,8 @@ int main(int argc, char** argv)
     {
         for (std::size_t colIdx = 0; colIdx < columnCount; colIdx++)
         {
-            const auto lhs = (*parallel->get(rowIdx))[colIdx];
-            const auto rhs = (*sequential->get(rowIdx))[colIdx];
+            const auto lhs = parallel->at(rowIdx, colIdx);
+            const auto rhs = sequential->at(rowIdx, colIdx);
 			if (lhs != rhs)
             {
                 std::cout << "FAIL: Mismatch at (" << rowIdx << ", " << colIdx << "): " << lhs

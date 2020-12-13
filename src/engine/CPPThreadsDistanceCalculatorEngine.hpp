@@ -13,8 +13,8 @@ struct Submitter
 {
     void operator()(ThreadPool&                             pool,
                     std::size_t                             resultIdx,
-                    structures::RowSPtr<ValueType>          queryRow,
-                    structures::RowSPtr<ValueType>          datasetRow,
+                    structures::Row<ValueType>              queryRow,
+                    structures::Row<ValueType>              datasetRow,
                     structures::CSVContainerSPtr<ValueType> distances)
     {
         Submitter<ValueType, kind>(pool, resultIdx, queryRow, datasetRow, distances);
@@ -26,8 +26,8 @@ struct Submitter<ValueType, MetricKind::L1Metric>
 {
     void operator()(ThreadPool&                             pool,
                     std::size_t                             resultIdx,
-                    structures::RowSPtr<ValueType>          queryRow,
-                    structures::RowSPtr<ValueType>          datasetRow,
+                    structures::Row<ValueType>              queryRow,
+                    structures::Row<ValueType>              datasetRow,
                     structures::CSVContainerSPtr<ValueType> distances)
     {
         pool.Submit(L1Metric<ValueType>{resultIdx, queryRow, datasetRow, distances});
@@ -39,8 +39,8 @@ struct Submitter<ValueType, MetricKind::L2Metric>
 {
     void operator()(ThreadPool&                             pool,
                     std::size_t                             resultIdx,
-                    structures::RowSPtr<ValueType>          queryRow,
-                    structures::RowSPtr<ValueType>          datasetRow,
+                    structures::Row<ValueType>              queryRow,
+                    structures::Row<ValueType>              datasetRow,
                     structures::CSVContainerSPtr<ValueType> distances)
     {
         pool.Submit(L2Metric<ValueType>{resultIdx, queryRow, datasetRow, distances});
@@ -52,15 +52,15 @@ struct Submitter<ValueType, MetricKind::HammingDistance>
 {
     void operator()(ThreadPool&                             pool,
                     std::size_t                             resultIdx,
-                    structures::RowSPtr<ValueType>          queryRow,
-                    structures::RowSPtr<ValueType>          datasetRow,
+                    structures::Row<ValueType>              queryRow,
+                    structures::Row<ValueType>              datasetRow,
                     structures::CSVContainerSPtr<ValueType> distances)
     {
         pool.Submit(HammingDistance<ValueType>{resultIdx, queryRow, datasetRow, distances});
     }
 };
 
-template <typename ValueType, MetricKind kind=MetricKind::L2Metric>
+template <typename ValueType, MetricKind kind = MetricKind::L2Metric>
 class CPPThreadsDistanceCalculatorEngine : public IDistanceCalculatorEngine<ValueType, kind>
 {
 public:
@@ -70,7 +70,7 @@ public:
     {
         assert(query != nullptr);
         assert(dataset != nullptr);
-		return runner(query, dataset);
+        return runner(query, dataset);
     }
 
     EngineKind type() const override
@@ -85,7 +85,7 @@ private:
     {
         const auto distanceMatrixRowCnt = query->rowCount() * dataset->rowCount();
         auto       result               = std::make_shared<structures::CSVContainer<float>>();
-        result->resize(distanceMatrixRowCnt);
+        result->resize(distanceMatrixRowCnt, query->columnCount());
 
         ThreadPool pool;
         for (std::size_t queryIdx : range(query->rowCount()))
@@ -100,5 +100,4 @@ private:
 
         return result;
     }
-
 };

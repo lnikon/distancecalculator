@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN
 
 #include "CSVReader.hpp"
+#include "TestConfig.hpp"
 
 #include <catch2/catch.hpp>
 
@@ -13,6 +14,6 @@ TEST_CASE("CSVReader: Parse Floats", "[csvreader]")
         Path("/home/nikon/projects/distancecalculator/test/data/csv/test_data.csv"));
 
     REQUIRE(container != nullptr);
-    REQUIRE(container->rowCount() == 4);
-    REQUIRE(container->columnCount() == 5);
+    REQUIRE(container->rowCount() == 128);
+    REQUIRE(container->columnCount() == 512);
 }
