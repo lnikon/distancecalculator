@@ -15,34 +15,38 @@ template <typename ValueType>
 class NonOwningArray : public std::enable_shared_from_this<NonOwningArray<ValueType>>
 {
 public:
-	template <typename ItValueType = ValueType>
-	struct NonOwningArrayIterator : public std::iterator<std::forward_iterator_tag, ValueType> {
-		friend class NonOwningArray<ValueType>;
+    template <typename ItValueType = ValueType>
+    struct NonOwningArrayIterator : public std::iterator<std::forward_iterator_tag, ValueType>
+    {
+        friend class NonOwningArray<ValueType>;
 
-		public:
-		ItValueType& operator*()
-		{
-			return *m_current;
-		}
+    public:
+        ItValueType& operator*()
+        {
+            return *m_current;
+        }
 
-		const NonOwningArrayIterator<ItValueType>& operator++()
-		{
-			m_current++;
-			return *this;
-		}
-		
-		bool operator!=(const NonOwningArrayIterator<ItValueType>& other) const
-		{
-			return m_current != other.m_current;
-		}
+        const NonOwningArrayIterator<ItValueType>& operator++()
+        {
+            m_current++;
+            return *this;
+        }
 
-		private:
-		ValueType* m_current;
-		NonOwningArrayIterator(ValueType* current) : m_current(current) {}
-	};
+        bool operator!=(const NonOwningArrayIterator<ItValueType>& other) const
+        {
+            return m_current != other.m_current;
+        }
 
-	using iterator = NonOwningArrayIterator<ValueType>;
-	using const_iterator = const NonOwningArrayIterator<ValueType>;
+    private:
+        ValueType* m_current;
+        NonOwningArrayIterator(ValueType* current)
+            : m_current(current)
+        {
+        }
+    };
+
+    using iterator       = NonOwningArrayIterator<ValueType>;
+    using const_iterator = const NonOwningArrayIterator<ValueType>;
 
     NonOwningArray(ValueType* ptr, const std::size_t size)
         : m_ptr(ptr)
@@ -50,36 +54,36 @@ public:
     {
     }
 
-	std::size_t size() const
-	{
-		return m_size;
-	}
+    std::size_t size() const
+    {
+        return m_size;
+    }
 
-	ValueType& operator[](const std::size_t idx)
-	{
-		assert(idx < m_size);
-		return *(m_ptr + idx);
-	}
+    ValueType& operator[](const std::size_t idx)
+    {
+        assert(idx < m_size);
+        return *(m_ptr + idx);
+    }
 
-	iterator begin()
-	{
-		return NonOwningArrayIterator<ValueType>(m_ptr);
-	}
+    iterator begin()
+    {
+        return NonOwningArrayIterator<ValueType>(m_ptr);
+    }
 
-	iterator end()
-	{
-		return NonOwningArrayIterator<ValueType>(nullptr);
-	}
-	
-	const_iterator cbegin()
-	{
-		return NonOwningArrayIterator<ValueType>(m_ptr);
-	}
+    iterator end()
+    {
+        return NonOwningArrayIterator<ValueType>(nullptr);
+    }
 
-	iterator cend()
-	{
-		return NonOwningArrayIterator<ValueType>(nullptr);
-	}
+    const_iterator cbegin()
+    {
+        return NonOwningArrayIterator<ValueType>(m_ptr);
+    }
+
+    iterator cend()
+    {
+        return NonOwningArrayIterator<ValueType>(nullptr);
+    }
 
 private:
     ValueType*        m_ptr{nullptr};
@@ -138,16 +142,8 @@ public:
         assert(rowCount > 0);
         assert(columnCount > 0);
 
-        std::cout << "row=" << rowCount << "; column=" << columnCount << ";\n";
-
-        // This part is little bit tricky
-        // Sometimes client may want to allocate @rowCount rows without specifying @columnCount
-        // So we need to handle this case explicitly
-        if (columnCount > 0)
-        {
-            const std::size_t sz{rowCount * columnCount};
-            m_data.resize(sz);
-        }
+        const std::size_t sz{rowCount * columnCount};
+        m_data.resize(sz);
 
         // When construction went successfully, update row and column count
         m_rowCount    = rowCount;
@@ -159,10 +155,10 @@ public:
         at(row, column) = value;
     }
 
-	NonOwningArray<ValueType> row(const std::size_t rowIdx)
-	{
-		return NonOwningArray<ValueType>(data() + rowIdx*columnCount(), columnCount());
-	}
+    NonOwningArray<ValueType> row(const std::size_t rowIdx)
+    {
+        return NonOwningArray<ValueType>(data() + rowIdx * columnCount(), columnCount());
+    }
 
     std::size_t rowCount() const
     {
@@ -173,7 +169,7 @@ public:
     {
         return m_columnCount;
     }
-	
+
 private:
     std::size_t            m_rowCount{0};
     std::size_t            m_columnCount{0};
@@ -201,26 +197,26 @@ public:
     /* @brief Returns number of columns */
     std::size_t columnCount() const noexcept;
 
-//  typename std::vector<RowSPtr<ValueType>>::iterator begin();
-//  typename std::vector<RowSPtr<ValueType>>::iterator end();
-//  typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin();
-//  typename std::vector<RowSPtr<ValueType>>::const_iterator cend();
- 
+    //  typename std::vector<RowSPtr<ValueType>>::iterator begin();
+    //  typename std::vector<RowSPtr<ValueType>>::iterator end();
+    //  typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin();
+    //  typename std::vector<RowSPtr<ValueType>>::const_iterator cend();
+
     ValueType* data()
     {
         std::shared_lock slck(m_mutex);
         return m_data.data();
     }
 
-	NonOwningArray<ValueType> get(const std::size_t rowIdx)
-	{
+    NonOwningArray<ValueType> get(const std::size_t rowIdx)
+    {
         std::shared_lock slck(m_mutex);
-		return m_data.row(rowIdx);
-	}
+        return m_data.row(rowIdx);
+    }
 
     void set(const std::size_t row, const std::size_t column, ValueType&& value)
     {
-		std::lock_guard lg(m_mutex);
+        std::lock_guard lg(m_mutex);
         m_data.set(row, column, std::forward<ValueType>(value));
     }
 
@@ -299,28 +295,28 @@ void CSVContainer<ValueType>::resize(const std::size_t rowDim, const std::size_t
 //     std::shared_lock slck(m_mutex);
 //     return m_data.begin();
 // }
-// 
+//
 // template <typename ValueType>
 // typename std::vector<RowSPtr<ValueType>>::iterator CSVContainer<ValueType>::end()
 // {
 //     std::shared_lock slck(m_mutex);
 //     return m_data.end();
 // }
-// 
+//
 // template <typename ValueType>
 // typename std::vector<RowSPtr<ValueType>>::const_iterator CSVContainer<ValueType>::cbegin()
 // {
 //     std::shared_lock slck(m_mutex);
 //     return m_data.cbegin();
 // }
-// 
+//
 // template <typename ValueType>
 // typename std::vector<RowSPtr<ValueType>>::const_iterator CSVContainer<ValueType>::cend()
 // {
 //     std::shared_lock slck(m_mutex);
 //     return m_data.cend();
 // }
-// 
+//
 // /*
 //  * Free functions.
 //  */
@@ -329,19 +325,19 @@ void CSVContainer<ValueType>::resize(const std::size_t rowDim, const std::size_t
 // {
 //     return c.begin();
 // }
-// 
+//
 // template <typename ValueType>
 // typename std::vector<RowSPtr<ValueType>>::iterator end(CSVContainer<ValueType>& c)
 // {
 //     return c.end();
 // }
-// 
+//
 // template <typename ValueType>
 // typename std::vector<RowSPtr<ValueType>>::const_iterator cbegin(CSVContainer<ValueType>& c)
 // {
 //     return c.cbegin();
 // }
-// 
+//
 // template <typename ValueType>
 // typename std::vector<RowSPtr<ValueType>>::const_iterator cend(CSVContainer<ValueType>& c)
 // {

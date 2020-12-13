@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     auto end = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> elapsed_seconds = end - start;
-    std::cout << "elapsed time cuda: " << elapsed_seconds.count() << "s\n";
+    std::cout << "Elapsed time cuda: " << elapsed_seconds.count() << "s\n";
 
     dc.setDistanceCalculatorEngineKind(DistanceCalculatorEngineKind::CPPThreads);
 
@@ -48,11 +48,11 @@ int main(int argc, char** argv)
     end = std::chrono::steady_clock::now();
 
     elapsed_seconds = end - start;
-    std::cout << "elapsed time thread pool: " << elapsed_seconds.count() << "s\n";
+    std::cout << "Elapsed time thread pool: " << elapsed_seconds.count() << "s\n";
 
-	assert(parallel->rowCount() == sequential->rowCount());
-	assert(parallel->rowCount() == sequential->rowCount());
-	assert(parallel->columnCount() == sequential->columnCount());
+    assert(parallel->rowCount() == sequential->rowCount());
+    assert(parallel->rowCount() == sequential->rowCount());
+    assert(parallel->columnCount() == sequential->columnCount());
 
     /* Verification of a selected calculation engine with the naive one */
     const auto rowCount    = parallel->rowCount();
@@ -63,16 +63,17 @@ int main(int argc, char** argv)
         {
             const auto lhs = parallel->at(rowIdx, colIdx);
             const auto rhs = sequential->at(rowIdx, colIdx);
-			if (lhs != rhs)
+            if (lhs != rhs)
             {
                 std::cout << "FAIL: Mismatch at (" << rowIdx << ", " << colIdx << "): " << lhs
                           << " != " << rhs << "\n";
+                std::cout << "Verification FAIL\n";
                 return 1;
-            } 
+            }
         }
     }
 
-	std::cout << "PASS\n";
+    std::cout << "Verification PASS\n";
 
     return 0;
 }

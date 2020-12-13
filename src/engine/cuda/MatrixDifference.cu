@@ -65,7 +65,6 @@ __global__ void HammingDistance(float* query, float* dataset, float* distances, 
 void L1DistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount)
 {
 	const int rowCountDistances = queryRowCount * datasetRowCount;
-	printf("rowCountDistances=%d\n", rowCountDistances);
 	const int querySize = queryRowCount * columnCount;
 	const int datasetSize = datasetRowCount * columnCount;
 	const int distancesSize = rowCountDistances * columnCount;
@@ -99,7 +98,6 @@ void L1DistanceRunner(float* query, float* dataset, float* distances, int queryR
 void L2DistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount)
 {
 	const int rowCountDistances = queryRowCount * datasetRowCount;
-	printf("rowCountDistances=%d\n", rowCountDistances);
 	const int querySize = queryRowCount * columnCount;
 	const int datasetSize = datasetRowCount * columnCount;
 	const int distancesSize = rowCountDistances * columnCount;
@@ -133,7 +131,6 @@ void L2DistanceRunner(float* query, float* dataset, float* distances, int queryR
 void HammingDistanceRunner(float* query, float* dataset, float* distances, int queryRowCount, int datasetRowCount, int columnCount)
 {
 	const int rowCountDistances = queryRowCount * datasetRowCount;
-	printf("rowCountDistances=%d\n", rowCountDistances);
 	const int querySize = queryRowCount * columnCount;
 	const int datasetSize = datasetRowCount * columnCount;
 	const int distancesSize = rowCountDistances * columnCount;
